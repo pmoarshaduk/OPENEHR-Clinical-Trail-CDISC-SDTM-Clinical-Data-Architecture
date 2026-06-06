@@ -1,4 +1,4 @@
-# PCOD openEHR CDR Pilot
+ PCOD openEHR CDR Pilot
 
 <div align="center">
 
@@ -11,43 +11,43 @@
 [![Status](https://img.shields.io/badge/Status-Pilot_Live-brightgreen?style=flat-square)]()
 [![Template](https://img.shields.io/badge/Template-LOCKED_v1.0-orange?style=flat-square)]()
 
-**A production-grade openEHR Clinical Data Repository (CDR) for a PCOD pilot clinical trial**
+A production-grade openEHR Clinical Data Repository (CDR) for a PCOD pilot clinical trial
 
-**Conceptual G.O.T. Hospital, Bristol, UK**
+Conceptual G.O.T. Hospital, Bristol, UK
 
-[Quick Start](#quick-start) · [Architecture](#architecture) · [Data Pipeline](#data-pipeline) · [API Reference](#api-reference) · [Compliance](#compliance) · [Roadmap](#roadmap)
+[Quick Start](quick-start) · [Architecture](architecture) · [Data Pipeline](data-pipeline) · [API Reference](api-reference) · [Compliance](compliance) · [Roadmap](roadmap)
 
 </div>
 
 ---
 
-## Table of Contents
+Table of Contents
 
-- [Project Overview](#project-overview)
-- [Project Team](#project-team)
-- [Template Lock Notice](#template-lock-notice)
-- [Architecture](#architecture)
-- [Technical Stack](#technical-stack)
-- [Data Flow](#data-flow)
-- [Quick Start](#quick-start)
-- [Directory Structure](#directory-structure)
-- [Data Pipeline](#data-pipeline)
-- [API Reference](#api-reference)
-- [eCRF Frontend](#ecrf-frontend)
-- [Compliance](#compliance)
-- [Pilot Data Status](#pilot-data-status)
-- [Operations](#operations)
-- [Roadmap](#roadmap)
-- [Version History](#version-history)
-- [References](#references)
+- [Project Overview](project-overview)
+- [Project Team](project-team)
+- [Template Lock Notice](template-lock-notice)
+- [Architecture](architecture)
+- [Technical Stack](technical-stack)
+- [Data Flow](data-flow)
+- [Quick Start](quick-start)
+- [Directory Structure](directory-structure)
+- [Data Pipeline](data-pipeline)
+- [API Reference](api-reference)
+- [eCRF Frontend](ecrf-frontend)
+- [Compliance](compliance)
+- [Pilot Data Status](pilot-data-status)
+- [Operations](operations)
+- [Roadmap](roadmap)
+- [Version History](version-history)
+- [References](references)
 
 ---
 
-## Project Overview
+Project Overview
 
-This repository documents the full deployment of a **PCOD openEHR Clinical Data Repository (CDR)** pilot. The system enables structured clinical data capture, storage, querying, and regulatory export for a PCOD pilot trial — built on internationally recognised clinical informatics standards.
+This repository documents the full deployment of a PCOD openEHR Clinical Data Repository (CDR) pilot. The system enables structured clinical data capture, storage, querying, and regulatory export for a PCOD pilot trial — built on internationally recognised clinical informatics standards.
 
-**What this project delivers:**
+What this project delivers:
 
 - Containerised openEHR CDR using EHRbase 2.11.0 and PostgreSQL 16.2
 - Locked clinical template `PCOD_Working_Impression` deployed and validated
@@ -57,26 +57,26 @@ This repository documents the full deployment of a **PCOD openEHR Clinical Data 
 - Full database backup and restore scripts
 - Designed for future integration with HAPI FHIR R4, Microsoft Fabric, and Palantir
 
-> **Data notice:** All patient names and NHS numbers in this repository are **entirely synthetic test data**. No real patient data has been used or stored.
+> Data notice: All patient names and I*S numbers in this repository are entirely synthetic test data. No real patient data has been used or stored.
 
 ---
 
-## Project Team
+Project Team
 
 | Role | Name | Contact |
 |------|------|---------|
-| **Technical Lead / Architect** | **Muhammad Arshad** | pmoarshaduk@gmail.com |
-| Principal Investigator | Dr. Fatima Al-Rashidi | fatima.alrashidi@got-hospital.nhs.uk |
-| Clinical Site Lead | Dr. Yusuf Okonkwo | yusuf.okonkwo@got-hospital.nhs.uk |
-| Data Manager | Zara Mahmood-Sheikh | zara.mahmood@got-hospital.nhs.uk |
-| Regulatory Affairs | Amara Hussain | amara.hussain@got-hospital.nhs.uk |
-| CRF Lead | Nadia Khalil | nadia.khalil@got-hospital.nhs.uk |
+| Technical Lead / Architect | Muhammad Arshad | pmoarshaduk@gmail.com |
+| Principal Investigator | Dr. Fatima Al-Rashidi | fatima.alrashidi@got-hospital.I*S.uk |
+| Clinical Site Lead | Dr. Yusuf Okonkwo | yusuf.okonkwo@got-hospital.I*S.uk |
+| Data Manager | Zara Mahmood-Sheikh | zara.mahmood@got-hospital.I*S.uk |
+| Regulatory Affairs | Amara Hussain | amara.hussain@got-hospital.I*S.uk |
+| CRF Lead | Nadia Khalil | nadia.khalil@got-hospital.I*S.uk |
 
-**Site:** Conceptual G.O.T. Hospital, Bristol, UK
+Site: Conceptual G.O.T. Hospital, Bristol, UK
 
 ---
 
-## Template Lock Notice
+Template Lock Notice
 
 ```
 +------------------------------------------------------------------+
@@ -91,11 +91,11 @@ This repository documents the full deployment of a **PCOD openEHR Clinical Data 
 +------------------------------------------------------------------+
 ```
 
-**Change control process:** Written request > Impact assessment > Technical review > Approval > Implementation > Validation > Documentation update.
+Change control process: Written request > Impact assessment > Technical review > Approval > Implementation > Validation > Documentation update.
 
 ---
 
-## Architecture
+Architecture
 
 ```
 +-------------------------------------------------------------------------+
@@ -147,7 +147,7 @@ This repository documents the full deployment of a **PCOD openEHR Clinical Data 
 
 ---
 
-## Technical Stack
+Technical Stack
 
 | Component | Version | Port | Container | Status |
 |-----------|---------|------|-----------|--------|
@@ -159,11 +159,11 @@ This repository documents the full deployment of a **PCOD openEHR Clinical Data 
 | eCRF Frontend | HTML5 / JS | local file | — | Ready |
 | HAPI FHIR R4 | — | 8090 (planned) | — | Phase 2 |
 
-> **Note on version history:** EHRbase 2.31.0 was evaluated and rejected. Its compiled `docker-entrypoint` binary hardcodes `spring.profiles.active=docker`, overriding all environment variables and silently disabling the openEHR REST API module. EHRbase 2.11.0 was selected as it uses a standard shell entrypoint and is confirmed working with the full REST API.
+> Note on version history: EHRbase 2.31.0 was evaluated and rejected. Its compiled `docker-entrypoint` binary hardcodes `spring.profiles.active=docker`, overriding all environment variables and silently disabling the openEHR REST API module. EHRbase 2.11.0 was selected as it uses a standard shell entrypoint and is confirmed working with the full REST API.
 
 ---
 
-## Data Flow
+Data Flow
 
 ```
 PHASE 1 -- DATA INGESTION
@@ -248,33 +248,33 @@ PHASE 4 -- FUTURE (Planned)
 
 ---
 
-## Quick Start
+Quick Start
 
-### Prerequisites
+Prerequisites
 
 - Docker Desktop for Windows
 - PowerShell 5.1 or later
 - 4 GB RAM minimum
 - Git
 
-### Clone and Deploy
+Clone and Deploy
 
 ```powershell
-# Clone repository
+ Clone repository
 git clone https://github.com/your-username/pcod-cdr.git
 cd pcod-cdr\docker
 
-# Start the stack
+ Start the stack
 docker compose up -d
 
-# Wait for EHRbase to initialise (approx 90 seconds)
+ Wait for EHRbase to initialise (approx 90 seconds)
 Start-Sleep -Seconds 90
 
-# Verify CDR is running -- returns empty array on fresh install
+ Verify CDR is running -- returns empty array on fresh install
 Invoke-RestMethod "http://localhost:8080/ehrbase/rest/openehr/v1/definition/template/adl1.4" -UseBasicParsing
 ```
 
-### Upload Template
+Upload Template
 
 ```powershell
 Invoke-WebRequest `
@@ -284,21 +284,21 @@ Invoke-WebRequest `
   -InFile ".\templates\PCOD_Working_Impression.opt" `
   -UseBasicParsing
 
-# Verify -- should show PCOD_Working_Impression with no leading space
+ Verify -- should show PCOD_Working_Impression with no leading space
 Invoke-RestMethod "http://localhost:8080/ehrbase/rest/openehr/v1/definition/template/adl1.4" -UseBasicParsing
 ```
 
-### Load a Patient Record
+Load a Patient Record
 
 ```powershell
-# Step 1 -- Create EHR (ID is in Location response header)
+ Step 1 -- Create EHR (ID is in Location response header)
 $ehr = Invoke-WebRequest `
   -Uri "http://localhost:8080/ehrbase/rest/openehr/v1/ehr" `
   -Method POST -ContentType "application/json" -UseBasicParsing
 $ehrId = $ehr.Headers.Location.Split("/")[-1]
 Write-Host "EHR ID: $ehrId"
 
-# Step 2 -- Post composition (204 = success)
+ Step 2 -- Post composition (204 = success)
 Invoke-WebRequest `
   -Uri "http://localhost:8080/ehrbase/rest/openehr/v1/ehr/$ehrId/composition?format=FLAT&templateId=PCOD_Working_Impression" `
   -Method POST `
@@ -308,14 +308,14 @@ Invoke-WebRequest `
   -UseBasicParsing
 ```
 
-### Load Batch (5 patients)
+Load Batch (5 patients)
 
 ```powershell
 cd C:\Projects\PCOD\docker
 .\load_batch.ps1
 ```
 
-### Verify All Records
+Verify All Records
 
 ```powershell
 $aql = @"
@@ -327,7 +327,7 @@ Invoke-RestMethod -Uri "http://localhost:8080/ehrbase/rest/openehr/v1/query/aql"
 
 ---
 
-## Directory Structure
+Directory Structure
 
 ```
 C:\Projects\PCOD\
@@ -370,16 +370,16 @@ C:\Projects\PCOD\
 
 ---
 
-## Data Pipeline
+Data Pipeline
 
-### Run the Full Pipeline
+Run the Full Pipeline
 
 ```powershell
 cd C:\Projects\PCOD\docker
 .\run-pipeline.ps1
 ```
 
-### Pipeline Steps
+Pipeline Steps
 
 | Step | Script | Input | Output | Validation |
 |------|--------|-------|--------|------------|
@@ -387,16 +387,16 @@ cd C:\Projects\PCOD\docker
 | 2. Validate | `validate-sdtm.ps1` | Raw CSV | `validation_report.txt` | exit 0 = PASSED |
 | 3. Define.xml | `generate-define-xml.ps1` | Validated CSV | `define.xml` (CDISC v2.1) | File size check |
 
-### CDISC SDTM Domains
+CDISC SDTM Domains
 
 | Domain | Description | Source Fields |
 |--------|-------------|---------------|
-| DM | Demographics | Patient name, NHS number, encounter date |
+| DM | Demographics | Patient name, I*S number, encounter date |
 | MH | Medical History | Clinical presentation, working impression |
 | CO | Comments | Clinical notes, consent status |
 | TS | Trial Summary | Protocol, site, version metadata |
 
-### Pipeline Expected Output
+Pipeline Expected Output
 
 ```
 ========================================
@@ -422,9 +422,9 @@ PIPELINE SUCCESSFUL
 
 ---
 
-## API Reference
+API Reference
 
-### Endpoints
+Endpoints
 
 | Purpose | URL | Method | Returns |
 |---------|-----|--------|---------|
@@ -435,16 +435,16 @@ PIPELINE SUCCESSFUL
 | Post composition | `http://localhost:8080/ehrbase/rest/openehr/v1/ehr/{id}/composition?format=FLAT&templateId=PCOD_Working_Impression` | POST | 204 No Content |
 | AQL query | `http://localhost:8080/ehrbase/rest/openehr/v1/query/aql` | POST | JSON result set |
 
-### Key API Behaviours (EHRbase 2.11.0)
+Key API Behaviours (EHRbase 2.11.0)
 
-- `/system/info` does **not** exist in 2.11.0 -- use `/definition/template/adl1.4` to verify CDR is alive
-- EHR ID is returned in the **Location response header**, not the body
-- Composition POST returns **204 No Content** on success (not 200 or 201)
+- `/system/info` does not exist in 2.11.0 -- use `/definition/template/adl1.4` to verify CDR is alive
+- EHR ID is returned in the Location response header, not the body
+- Composition POST returns 204 No Content on success (not 200 or 201)
 - Format parameter must be uppercase: `format=FLAT` (not `flat`)
 - Template ID must be passed as query parameter: `templateId=PCOD_Working_Impression`
 - `openEHR-TEMPLATE-ID` header is silently dropped by PowerShell -- use query param instead
 
-### AQL Path Reference
+AQL Path Reference
 
 | Field | AQL Path |
 |-------|----------|
@@ -454,9 +454,9 @@ PIPELINE SUCCESSFUL
 | Composer / Clinician | `c/composer/name` |
 | Facility | `c/context/health_care_facility/name` |
 | Patient name | `c/context/other_context[at0001]/items[openEHR-EHR-CLUSTER.person.v1]/items[at0001]/value/value` |
-| NHS number | `c/context/other_context[at0001]/items[openEHR-EHR-CLUSTER.person.v1]/items[at0003,'NHS Number']/value/value` |
+| I*S number | `c/context/other_context[at0001]/items[openEHR-EHR-CLUSTER.person.v1]/items[at0003,'I*S Number']/value/value` |
 
-### FLAT JSON Payload (working format)
+FLAT JSON Payload (working format)
 
 ```json
 {
@@ -467,40 +467,40 @@ PIPELINE SUCCESSFUL
   "ctx/health_care_facility|name": "Conceptual G.O.T. Hospital, Bristol",
   "ctx/health_care_facility|id": "GOT-BRS-001",
   "pcod_working_impression/context/person:0/name|value": "Patient Name",
-  "pcod_working_impression/context/person:0/nhs_number|value": "1234567890"
+  "pcod_working_impression/context/person:0/I*S_number|value": "1234567890"
 }
 ```
 
 ---
 
-## eCRF Frontend
+eCRF Frontend
 
 The eCRF (`ecrf/frontend/index.html`) is a standalone HTML5 form with built-in validation and CDR submission.
 
-### Form Sections
+Form Sections
 
 | Section | Content | Stored in CDR |
 |---------|---------|---------------|
 | A | Consent and eligibility checkboxes | No |
-| B | Patient name and NHS number | **Yes** |
+| B | Patient name and I*S number | Yes |
 | C | Demographics (DOB, sex, ethnicity, postcode) | No -- DP |
 | D | Clinical presentation, BMI, cycle regularity, notes | No -- DP |
-| E | Encounter date, clinician, facility, setting | **Yes** |
+| E | Encounter date, clinician, facility, setting | Yes |
 | F | Audit trail (ALCOA+) | No |
 
 `DP` = Display only. Planned for CDR template v2.0.
 
-### Validation Rules
+Validation Rules
 
-- Submit button disabled until: both consent checkboxes ticked + patient name (min 2 chars) + valid 10-digit NHS number + clinician selected
-- NHS number field strips non-numeric characters automatically
+- Submit button disabled until: both consent checkboxes ticked + patient name (min 2 chars) + valid 10-digit I*S number + clinician selected
+- I*S number field strips non-numeric characters automatically
 - Success banner persists until dismissed by user (X button)
 - Form auto-resets after successful submission
 - Record count in status bar refreshes after each submission
 
 ---
 
-## Compliance
+Compliance
 
 | Standard | Version | Status | Scope |
 |----------|---------|--------|-------|
@@ -508,16 +508,16 @@ The eCRF (`ecrf/frontend/index.html`) is a standalone HTML5 form with built-in v
 | UK GDPR / DPA 2018 | 2018 | Compliant (synthetic data pilot) | Data protection, pseudonymisation |
 | CDISC SDTM | v3.4 | Implemented | DM, MH, CO, TS domains |
 | openEHR International | v1.0.4 | Core architecture | CDR, templates, AQL |
-| NHS Digital Standards | Current | Applied | NHS number format, SNOMED CT |
+| I*S Digital Standards | Current | Applied | I*S number format, SNOMED CT |
 | DCB0129 / DCB0160 | Current | Planned Phase 2 | Clinical safety |
 | 21 CFR Part 11 | Current | Planned Phase 2 | Electronic records |
 | FHIR R4 | 4.0.1 | Planned Phase 2 | Interoperability |
 
 ---
 
-## Pilot Data Status
+Pilot Data Status
 
-| Patient (Synthetic) | NHS Number | Date Loaded | EHR Status |
+| Patient (Synthetic) | I*S Number | Date Loaded | EHR Status |
 |---------------------|------------|-------------|------------|
 | Fatima Al-Hassan | 4857291036 | 2026-06-05 | Active |
 | Priya Sharma | 7623940182 | 2026-06-05 | Active |
@@ -527,33 +527,33 @@ The eCRF (`ecrf/frontend/index.html`) is a standalone HTML5 form with built-in v
 | Kefilwe Dlamini | 5289013746 | 2026-06-05 | Active |
 | Rania Al-Farsi | 7890123456 | 2026-06-05 | Active |
 
-**Total: 7 synthetic patients. No real patient data.**
+Total: 7 synthetic patients. No real patient data.
 
 ---
 
-## Operations
+Operations
 
-### Daily Commands
+Daily Commands
 
 ```powershell
-# Start CDR
+ Start CDR
 cd C:\Projects\PCOD\docker
 docker compose up -d
 
-# Stop CDR
+ Stop CDR
 docker compose down
 
-# Live logs
+ Live logs
 docker logs pcod_ehrbase -f
 
-# Container status
+ Container status
 docker compose ps
 
-# Verify CDR alive
+ Verify CDR alive
 Invoke-RestMethod "http://localhost:8080/ehrbase/rest/openehr/v1/definition/template/adl1.4" -UseBasicParsing
 ```
 
-### Backup
+Backup
 
 ```powershell
 cd C:\Projects\PCOD\docker
@@ -567,21 +567,21 @@ Backup saves to `backups\YYYYMMDD_HHMM\` containing:
 - Patient JSON files
 - Live AQL snapshot as JSON and CSV
 
-### Restore from Backup
+Restore from Backup
 
 ```powershell
-# Wipe and restart fresh
+ Wipe and restart fresh
 docker compose down
 docker volume rm docker_pcod_db_data
 docker compose up -d
 Start-Sleep -Seconds 90
 
-# Restore database
+ Restore database
 docker exec -i pcod_db psql -U postgres -d ehrbase `
   < ".\backups\YYYYMMDD_HHMM\db\ehrbase_full_YYYYMMDD_HHMM.sql"
 ```
 
-### Troubleshooting
+Troubleshooting
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
@@ -594,9 +594,9 @@ docker exec -i pcod_db psql -U postgres -d ehrbase `
 
 ---
 
-## Roadmap
+Roadmap
 
-### Phase 1 -- Pilot (Complete)
+Phase 1 -- Pilot (Complete)
 
 - [x] EHRbase 2.11.0 on Docker with PostgreSQL 16.2
 - [x] openEHR REST API fully operational
@@ -609,7 +609,7 @@ docker exec -i pcod_db psql -U postgres -d ehrbase `
 - [x] CDISC SDTM pipeline (extract, validate, define.xml)
 - [x] Swagger UI enabled
 
-### Phase 2 -- Interoperability (Planned)
+Phase 2 -- Interoperability (Planned)
 
 - [ ] HAPI FHIR R4 server (port 8090, Docker, no conflict with EHRbase)
 - [ ] `push-to-fhir.ps1` -- openEHR to FHIR R4 resource mapping
@@ -617,18 +617,18 @@ docker exec -i pcod_db psql -U postgres -d ehrbase `
 - [ ] Microsoft Fabric / Palantir CDM ingestion
 - [ ] Template v2.0 with clinical archetypes (EVALUATION.problem_diagnosis.v1, ACTION.informed_consent.v0)
 
-### Phase 3 -- Scale (Future)
+Phase 3 -- Scale (Future)
 
 - [ ] Multi-site support (3 sites)
 - [ ] 21 CFR Part 11 audit trails
 - [ ] 100-patient rehearsal load test
 - [ ] Clinical trial protocol integration
 - [ ] DCB0129 / DCB0160 clinical safety case
-- [ ] NHS DSPT v5.0 alignment
+- [ ] I*S DSPT v5.0 alignment
 
 ---
 
-## Version History
+Version History
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
@@ -640,7 +640,7 @@ docker exec -i pcod_db psql -U postgres -d ehrbase `
 
 ---
 
-## References
+References
 
 | Standard / Resource | URL |
 |---------------------|-----|
@@ -650,33 +650,33 @@ docker exec -i pcod_db psql -U postgres -d ehrbase `
 | openEHR Specification | https://specifications.openehr.org/ |
 | openEHR CKM | https://ckm.openehr.org/ckm/ |
 | EHRbase Documentation | https://ehrbase.org/documentation/ |
-| NHS Digital Standards | https://digital.nhs.uk/data-and-information |
-| SNOMED CT UK | https://isd.digital.nhs.uk/trud/ |
-| DCB0129 / DCB0160 | https://digital.nhs.uk/services/clinical-safety |
+| I*S Digital Standards | https://digital.I*S.uk/data-and-information |
+| SNOMED CT UK | https://isd.digital.I*S.uk/trud/ |
+| DCB0129 / DCB0160 | https://digital.I*S.uk/services/clinical-safety |
 
 ---
 
-## Licence and Disclaimer
+Licence and Disclaimer
 
-This project is released for **educational and research purposes only**.
+This project is released for educational and research purposes only.
 
-All patient names, NHS numbers, and clinical data are **entirely synthetic**.
+All patient names, I*S numbers, and clinical data are entirely synthetic.
 No real patient data has been used, processed, or stored.
 
 Clinical deployment requires full regulatory approval, DPIA completion,
-clinical safety case (DCB0129/DCB0160), appropriate NHS IG agreements,
+clinical safety case (DCB0129/DCB0160), appropriate I*S IG agreements,
 and authentication implementation before handling real patient data.
 
 ---
 
 <div align="center">
 
-**Muhammad Arshad** | Technical Lead
+Muhammad Arshad | Technical Lead
 pmoarshaduk@gmail.com
 Conceptual G.O.T. Hospital, Bristol, UK
 
 *Built with openEHR · EHRbase 2.11.0 · PostgreSQL 16.2 · Docker*
 
-*ICH GCP E6(R2) | UK GDPR | CDISC SDTM v3.4 | NHS Digital Standards*
+*ICH GCP E6(R2) | UK GDPR | CDISC SDTM v3.4 | I*S Digital Standards*
 
 </div>

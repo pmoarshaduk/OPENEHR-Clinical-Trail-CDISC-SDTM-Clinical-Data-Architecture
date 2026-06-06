@@ -1,0 +1,26 @@
+# ============================================================
+# STANDALONE eCRF SERVICE - Does NOT affect existing CDR
+# This runs ONLY the NGINX web server for eCRF
+# ============================================================
+
+services:
+  ecrf:
+    image: nginx:alpine
+    container_name: pcod_ecrf
+    volumes:
+      - ./ecrf/frontend:/usr/share/nginx/html:ro
+    ports:
+      - "5500:80"
+    networks:
+      - docker_pcod_network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  docker_pcod_network:
+    external: true
+    name: docker_pcod_network

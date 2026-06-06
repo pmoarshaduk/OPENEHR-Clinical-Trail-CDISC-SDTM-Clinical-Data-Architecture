@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+
+  # ============================================================
+  # PostgreSQL Database
+  # ============================================================
+  postgres:
+    image: ehrbase/ehrbase-v2-postgres:16.2
+    container_name: pcod_postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      EHRBASE_USER: ehrbase_restricted
+      EHRBASE_PASSWORD: ehrbase_restricted
+      EHRBASE_USER_ADMIN: ehrbase
+      EHRBASE_PASSWORD_ADMIN: ehrbase
+
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+
+    networks:
+      - pcod_network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  # ============================================================
+  # EHRbase CDR
+  # ============================================================
+  ehrbase:
+    image: ehrbase/ehrbase:2.31.0
+    container_name: pcod_ehrbase
+    restart: unless-stopped
+
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/ehrbase
+      DB_USER: ehrbase_restricted
+      DB_PASS: ehrbase_restricted
+      DB_USER_ADMIN: ehrbase
+      DB_PASS_ADMIN: ehrbase
+
+      SERVER_NODENAME: local.ehrbase.org
+      SPRING_PROFILES_ACTIVE: "local,rest"
+      EHRBASE_RESTAPI_ENABLED: "true"
+      AUTH_TYPE: NONE
+      SECURITY_AUTHTYPE: NONE
+
+      # --------------------------------------------------------
+      # CORS for frontend at http://localhost:5500
+      # --------------------------------------------------------
+      WEB_CORS_ALLOWEDORIGINS: "http://localhost:5500"
+      WEB_CORS_ALLOWEDMETHODS: "GET,POST,PUT,DELETE,OPTIONS"
+      WEB_CORS_ALLOWEDHEADERS: "*"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - ./ehrbase/logs:/var/log/ehrbase
+
+    networks:
+      - pcod_network
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:8080/ehrbase/rest/openehr/v1/system/info || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+
+  # ============================================================
+  # eCRF Frontend + Nginx Reverse Proxy
+  # ============================================================
+  ecrf:
+    image: nginx:alpine
+    container_name: pcod_ecrf
+    restart: unless-stopped
+
+    ports:
+      - "5500:80"
+
+    volumes:
+      - ./ecrf/frontend:/usr/share/nginx/html:ro
+      - ./ecrf/nginx.conf:/etc/nginx/nginx.conf:ro
+
+    depends_on:
+      ehrbase:
+        condition: service_healthy
+
+    networks:
+      - pcod_network
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost/index.html || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+
+networks:
+  pcod_network:
+    driver: bridge

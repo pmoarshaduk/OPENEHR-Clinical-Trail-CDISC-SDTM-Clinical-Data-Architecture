@@ -1,0 +1,22 @@
+# Extract patient data from the JSON response
+# (Assuming $result contains your JSON response)
+
+$patients = $result.rows | ForEach-Object {
+    $comp = $_[0]
+    $patientName = $comp.context.other_context.items[0].items[0].value.value
+    $nhsNumber = $comp.context.other_context.items[0].items[1].value.value
+    $consultationDate = $comp.context.start_time.value
+    $clinician = $comp.composer.name
+    
+    [PSCustomObject]@{
+        PatientName = $patientName
+        NHSNumber = $nhsNumber
+        ConsultationDate = $consultationDate
+        Clinician = $clinician
+    }
+}
+
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "PCOD CDR - ALL PATIENTS" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Cyan
+$patients | Format-Table -AutoSize

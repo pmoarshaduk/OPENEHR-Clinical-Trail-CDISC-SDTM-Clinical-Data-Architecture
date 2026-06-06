@@ -1,0 +1,12 @@
+{
+  "ctx/language": "en",
+  "ctx/territory": "GB",
+  "ctx/composer_name": "Dr. Aisha Patel",
+  "ctx/id_scheme": "NHS",
+  "ctx/id_namespace": "NHS",
+  "ctx/time": "2026-06-05T09:00:00.000Z",
+  "ctx/health_care_facility|name": "PCOD Trial Centre London",
+  "ctx/health_care_facility|id": "PCOD-TCL-001",
+  "pcod_working_impression/context/person:0/name|value": "Amara Okonkwo",
+  "pcod_working_impression/context/person:0/nhs_number|value": "3421876590"
+}

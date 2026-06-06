@@ -1,0 +1,18 @@
+ehrbase:
+  rest:
+    security:
+      auth-type: BASIC
+      enabled: true
+  authentication:
+    basic:
+      username: admin
+      password: Information@1
+  database:
+    url: jdbc:postgresql://postgres:5432/PCODDATA
+    user: pcod_admin
+    password: Information@1
+  terminology:
+    server:
+      enabled: false  # No live SNOMED CT server - using embedded annotations
+  validation:
+    strict: true

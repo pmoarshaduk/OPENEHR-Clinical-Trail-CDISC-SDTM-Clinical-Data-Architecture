@@ -1,0 +1,74 @@
+# ============================================================
+# PCOD Clinical Trial — EHRbase CDR
+# Version:   EHRbase 2.11.0 + ehrbase-v2-postgres:16.2
+# Auth:      NONE (laptop is secured; RBAC added at trial phase)
+# REST API:  http://localhost:8080/ehrbase/rest/openehr/v1/
+# Swagger:   http://localhost:8080/ehrbase/swagger-ui/index.html
+# NOTE:      Passwords must NOT contain $ or ! — Docker variable substitution
+# ============================================================
+
+services:
+
+  pcod-db:
+    image: ehrbase/ehrbase-v2-postgres:16.2
+    container_name: pcod_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: PcodDB2026
+      EHRBASE_USER_ADMIN: ehrbase
+      EHRBASE_PASSWORD_ADMIN: PcodAdmin2026
+      EHRBASE_USER: ehrbase_restricted
+      EHRBASE_PASSWORD: PcodRestricted2026
+    volumes:
+      - pcod_db_data:/var/lib/postgresql/data
+    networks:
+      - pcod_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ehrbase"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  pcod-ehrbase:
+    image: ehrbase/ehrbase:2.11.0
+    container_name: pcod_ehrbase
+    restart: unless-stopped
+    depends_on:
+      pcod-db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://pcod-db:5432/ehrbase
+      DB_USER: ehrbase_restricted
+      DB_PASS: PcodRestricted2026
+      DB_USER_ADMIN: ehrbase
+      DB_PASS_ADMIN: PcodAdmin2026
+      SERVER_NODENAME: pcod.cdr.local
+      SECURITY_AUTHTYPE: NONE
+      SPRINGDOC_SWAGGER-UI_ENABLED: "true"
+      SPRINGDOC_API-DOCS_ENABLED: "true"
+      EHRBASE_AQL_EXPERIMENTAL_AQLONFOLDER_ENABLED: "true"
+      WEB_CORS_ALLOWEDORIGINS: "http://localhost:*"
+      WEB_CORS_ALLOWEDMETHODS: "GET,POST,PUT,DELETE,OPTIONS"
+      WEB_CORS_ALLOWEDHEADERS: "*"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/var/log/ehrbase
+    networks:
+      - pcod_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:8080/ehrbase/rest/openehr/v1/definition/template/adl1.4 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+networks:
+  pcod_net:
+    driver: bridge
+
+volumes:
+  pcod_db_data:
+    driver: local

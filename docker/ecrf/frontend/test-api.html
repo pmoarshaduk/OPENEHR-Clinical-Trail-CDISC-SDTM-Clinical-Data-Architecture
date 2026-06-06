@@ -1,0 +1,107 @@
+# Create the test-api.html file in the frontend directory
+$testHtmlPath = "C:\Projects\PCOD\docker\ecrf\frontend\test-api.html"
+
+$testHtmlContent = @'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PCOD eCRF - API Connectivity Test</title>
+    <style>
+        body { font-family: monospace; margin: 50px; background: #0f2027; color: #fff; }
+        .container { max-width: 800px; margin: 0 auto; background: #1a1a2e; padding: 30px; border-radius: 16px; }
+        .success { color: #27ae60; }
+        .error { color: #e74c3c; }
+        .info { color: #f39c12; }
+        h1 { color: #ffd700; }
+        hr { border-color: #2c5364; }
+        .result { background: #0f2027; padding: 15px; border-radius: 8px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 PCOD eCRF - API Connectivity Test</h1>
+        <hr>
+        <div id="status">Testing API connection...</div>
+        <div id="result" class="result"></div>
+    </div>
+    
+    <script>
+        const API_BASE = "http://localhost:8080/ehrbase/rest/openehr/v1";
+        const TEMPLATE_ID = "PCOD_Working_Impression";
+        
+        const statusDiv = document.getElementById('status');
+        const resultDiv = document.getElementById('result');
+        
+        async function testAPI() {
+            let results = [];
+            
+            // Test 1: Check if EHRbase is reachable
+            statusDiv.innerHTML = "📡 Test 1: Checking EHRbase connection...";
+            try {
+                const response = await fetch('http://localhost:8080/ehrbase/');
+                if (response.ok) {
+                    results.push('✅ EHRbase is reachable (Status: ' + response.status + ')');
+                } else {
+                    results.push('❌ EHRbase returned status: ' + response.status);
+                }
+            } catch (error) {
+                results.push('❌ EHRbase connection failed: ' + error.message);
+            }
+            
+            // Test 2: Check template endpoint
+            statusDiv.innerHTML = "📋 Test 2: Checking template endpoint...";
+            try {
+                const templateResponse = await fetch(`${API_BASE}/definition/template/adl1.4/${TEMPLATE_ID}`);
+                if (templateResponse.ok) {
+                    const template = await templateResponse.json();
+                    results.push('✅ Template found: ' + template.template_id);
+                } else {
+                    results.push('❌ Template not found (Status: ' + templateResponse.status + ')');
+                }
+            } catch (error) {
+                results.push('❌ Template API failed: ' + error.message);
+            }
+            
+            // Test 3: Query record count
+            statusDiv.innerHTML = "📊 Test 3: Querying patient records...";
+            try {
+                const aqlBody = { q: "SELECT COUNT(c) FROM COMPOSITION c WHERE c/archetype_details/template_id/value = '" + TEMPLATE_ID + "'" };
+                const recordsResponse = await fetch(`${API_BASE}/query/aql`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(aqlBody)
+                });
+                if (recordsResponse.ok) {
+                    const records = await recordsResponse.json();
+                    results.push('✅ Records found: ' + records.rows[0][0] + ' patients');
+                } else {
+                    results.push('❌ Query failed (Status: ' + recordsResponse.status + ')');
+                }
+            } catch (error) {
+                results.push('❌ Query failed: ' + error.message);
+            }
+            
+            // Display results
+            statusDiv.innerHTML = '<span class="success">✅ API Tests Complete</span>';
+            resultDiv.innerHTML = results.map(r => {
+                if (r.startsWith('✅')) return '<div class="success">' + r + '</div>';
+                if (r.startsWith('❌')) return '<div class="error">' + r + '</div>';
+                return '<div class="info">' + r + '</div>';
+            }).join('');
+            
+            // Check if all passed
+            if (results.every(r => r.startsWith('✅'))) {
+                resultDiv.innerHTML += '<hr><div class="success">🎉 All tests passed! Your eCRF is ready to use.</div>';
+            } else {
+                resultDiv.innerHTML += '<hr><div class="error">⚠️ Some tests failed. Please check the errors above.</div>';
+            }
+        }
+        
+        testAPI();
+    </script>
+</body>
+</html>
+'@
+
+$testHtmlContent | Out-File -FilePath $testHtmlPath -Encoding utf8
+Write-Host "✅ test-api.html created at: $testHtmlPath" -ForegroundColor Green

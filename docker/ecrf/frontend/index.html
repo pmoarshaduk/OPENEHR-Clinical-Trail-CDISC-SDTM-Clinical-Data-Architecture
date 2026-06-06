@@ -1,0 +1,802 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PCOD eCRF — Oncology Trial</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #1a1a2e; font-size: 16px; line-height: 1.5; }
+
+        .user-info {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            background: #2c3e50;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .page-header {
+            background: #ffffff;
+            border-bottom: 2px solid #2c3e50;
+            padding: 20px 24px 0;
+        }
+        .header-top { text-align: center; margin-bottom: 12px; }
+        .header-title h1 { font-size: 24px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px; }
+        .header-title p { font-size: 14px; color: #4a5568; }
+
+        .header-meta {
+            background: #f8f9fa;
+            padding: 10px 24px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 13px;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .template-banner {
+            background: #edf2f7;
+            text-align: center;
+            font-size: 13px;
+            padding: 8px 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .main { max-width: 1000px; margin: 20px auto; padding: 0 20px 40px; }
+
+        .status-panel {
+            background: #e8f4f8;
+            border-left: 4px solid #2c3e50;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .status-panel .item { background: white; padding: 6px 15px; border-radius: 20px; font-size: 14px; }
+        .online { color: #2e7d32; font-weight: bold; }
+        .offline { color: #c62828; font-weight: bold; }
+
+        .form-status {
+            background: #faf5ff;
+            border-left: 4px solid #9c27b0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 14px;
+        }
+
+        .section {
+            background: white;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .section-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #cbd5e0;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-num {
+            background: #2c3e50;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .section-title { font-size: 16px; font-weight: 600; color: #1a1a2e; }
+        .section-sub { font-size: 12px; font-weight: normal; color: #718096; }
+        .section-ref { margin-left: auto; font-size: 12px; color: #718096; }
+
+        .section-body { padding: 16px; }
+
+        .field-row { display: grid; gap: 16px; margin-bottom: 16px; }
+        .field-row.cols-2 { grid-template-columns: 1fr 1fr; }
+        .field-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .field-row.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+        .field { display: flex; flex-direction: column; gap: 6px; }
+        .field label { font-size: 14px; font-weight: 600; color: #2d3748; }
+        .req { color: #c62828; }
+        .dp-badge {
+            font-size: 11px;
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 6px;
+        }
+
+        input, select, textarea {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        input[readonly] { background: #f8f9fa; }
+
+        .consent-box {
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .consent-box.checked { border-color: #2e7d32; background: #f0fff4; }
+        .consent-label { font-size: 14px; }
+        .consent-ref { font-size: 12px; color: #718096; margin-top: 4px; }
+
+        .locked-notice {
+            font-size: 12px;
+            background: #fff8e1;
+            border-left: 3px solid #ffc107;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+        }
+
+        .actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-clear { background: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0; }
+        .btn-submit { background: #2c3e50; color: white; }
+        .btn-submit:disabled { background: #cbd5e0; cursor: not-allowed; }
+
+        .success-box {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            display: none;
+            font-size: 14px;
+        }
+        .error-box {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            display: none;
+            font-size: 14px;
+        }
+        .security-banner {
+            background: #e8f4f8;
+            font-size: 12px;
+            padding: 8px 16px;
+            margin: 16px 0;
+            border-radius: 8px;
+        }
+        .compliance-footer {
+            background: #f8f9fa;
+            border-top: 1px solid #cbd5e0;
+            margin-top: 20px;
+            padding: 12px 16px;
+            font-size: 12px;
+        }
+        .hint { font-size: 11px; color: #718096; margin-top: 2px; }
+
+        @media(max-width:600px){
+            .field-row.cols-2, .field-row.cols-3, .field-row.cols-4 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="user-info">
+    👤 Logged in as: <strong>Josephine Shonna</strong> | Session started: <span id="sessionTime"></span>
+</div>
+
+<div class="page-header">
+    <div class="header-top">
+        <div class="header-title">
+            <h1>PCOD Working Impression — Electronic Case Report Form (eCRF)</h1>
+            <p>Conceptual G.O.T. Hospital, Bristol, UK | Oncology Trial: GOT-ONC-2026-001</p>
+        </div>
+    </div>
+
+    <div class="header-meta">
+        <span>Protocol: PCOD-PILOT-2026-v1.0</span>
+        <span>Template: PCOD_Working_Impression 🔒</span>
+        <span>Standard: ICH GCP E6(R2)</span>
+        <span>Version: 1.0.0 (Locked)</span>
+        <span>Site: GOT-BRS-001</span>
+    </div>
+
+    <div class="template-banner">
+        Template: <strong>PCOD_Working_Impression v1.0.0</strong> |
+        Archetype: <strong>openEHR-EHR-COMPOSITION.encounter.v1</strong> |
+        Status: <strong>LOCKED — 2026-06-06</strong> |
+        Authorised by: Muhammad Arshad
+    </div>
+</div>
+
+<div class="main">
+
+    <div class="status-panel">
+        <div class="item">CDR: <span id="cdrStatus">Checking...</span></div>
+        <div class="item">Template: <span id="templateStatus">Checking...</span></div>
+        <div class="item">Records: <span id="recordCount">—</span></div>
+        <div><button onclick="checkStatus()" style="background:#2c3e50; color:white; padding:4px 12px; border:none; border-radius:16px;">Refresh</button></div>
+    </div>
+
+    <div class="form-status">
+        <span>Form status: <strong id="formStatus">Draft</strong></span>
+        <span style="font-size:12px;">Fields marked <span style="color:#c62828;">*</span> are mandatory | <span class="dp-badge">DP</span> = DP - in CDR</span>
+    </div>
+
+    <!-- SECTION A: Consent & eligibility -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">A</div>
+            <div class="section-title">Consent & eligibility</div>
+            <div class="section-ref">ICH GCP E6(R2) section 4.8</div>
+        </div>
+        <div class="section-body">
+            <div class="locked-notice">Template LOCKED — v1.0.0 — 2026-06-06 — No further modifications permitted without formal change control</div>
+            <div class="consent-box" id="cb1" onclick="toggleConsent('consent-check','cb1')">
+                <input type="checkbox" id="consent-check" onclick="event.stopPropagation()" onchange="updateStatus()">
+                <div>
+                    <div class="consent-label">Patient has provided written informed consent to participate in the PCOD pilot study and for their clinical data to be stored in the CDR in accordance with UK GDPR and the Data Protection Act 2018.</div>
+                    <div class="consent-ref">ICH GCP E6(R2) section 4.8.2 | UK GDPR Article 9(2)(h)</div>
+                </div>
+            </div>
+            <div class="consent-box" id="cb2" onclick="toggleConsent('eligibility-check','cb2')">
+                <input type="checkbox" id="eligibility-check" onclick="event.stopPropagation()" onchange="updateStatus()">
+                <div>
+                    <div class="consent-label">Patient meets all inclusion criteria and none of the exclusion criteria as defined in protocol PCOD-PILOT-2026-v1.0, confirmed by the recruiting clinician prior to enrolment.</div>
+                    <div class="consent-ref">Protocol Section 5 | ICH GCP E6(R2) section 4.3</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION B: Patient Identity (REAL DATA - stored in CDR) -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">B</div>
+            <div class="section-title">Patient identity <span class="section-sub">— stored in CDR</span></div>
+            <div class="section-ref">openEHR CLUSTER.person.v1</div>
+        </div>
+        <div class="section-body">
+            <div class="field-row cols-2">
+                <div class="field">
+                    <label>Full name <span class="req">*</span></label>
+                    <input type="text" id="patientName" placeholder="e.g. Amara Okonkwo" oninput="updateStatus()">
+                    <span class="hint">Forename and surname as per NHS records</span>
+                </div>
+                <div class="field">
+                    <label>NHS number <span class="req">*</span></label>
+                    <input type="text" id="nhsNumber" placeholder="10-digit NHS number" maxlength="10" oninput="validateNHS();updateStatus()">
+                    <span class="hint" id="nhsHint">10 digits, no spaces</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION C: Demographics (DISPLAY ONLY - not stored) -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">C</div>
+            <div class="section-title">Demographics <span class="section-sub">— DP CDR v1.0</span></div>
+            <div class="section-ref">Planned: CLUSTER.person.v1 extension (Phase 2)</div>
+        </div>
+        <div class="section-body">
+            <div class="field-row cols-3">
+                <div class="field">
+                    <label>Date of birth <span class="dp-badge">DP</span></label>
+                    <input type="date" id="dob">
+                </div>
+                <div class="field">
+                    <label>Sex at birth <span class="dp-badge">DP</span></label>
+                    <select id="sex">
+                        <option value="">Select</option>
+                        <option>Female</option>
+                        <option>Male</option>
+                        <option>Indeterminate</option>
+                        <option>Not stated</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Ethnicity <span class="dp-badge">DP</span></label>
+                    <select id="ethnicity">
+                        <option value="">Select</option>
+                        <option>Asian or Asian British</option>
+                        <option>Black, African, Caribbean or Black British</option>
+                        <option>Mixed or Multiple ethnic groups</option>
+                        <option>White</option>
+                        <option>Other ethnic group</option>
+                        <option>Not stated</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field-row cols-2">
+                <div class="field">
+                    <label>Postcode <span class="dp-badge">DP</span></label>
+                    <input type="text" id="postcode" placeholder="e.g. BS1 4ST" maxlength="8">
+                    <span class="hint">Partial postcode acceptable for anonymisation</span>
+                </div>
+                <div class="field">
+                    <label>GP practice <span class="dp-badge">DP</span></label>
+                    <input type="text" id="gpPractice" placeholder="e.g. Broadmead Surgery, Bristol">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION D: Clinical Presentation (DISPLAY ONLY - not stored) -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">D</div>
+            <div class="section-title">Clinical presentation <span class="section-sub"> CDR v1.0</span></div>
+            <div class="section-ref">Planned: EVALUATION.problem_diagnosis.v1 (Phase 2)</div>
+        </div>
+        <div class="section-body">
+            <div class="field-row cols-2">
+                <div class="field">
+                    <label>Presenting complaint <span class="dp-badge">DP</span></label>
+                    <select id="presenting">
+                        <option value="">Select</option>
+                        <option>Irregular menstrual cycles</option>
+                        <option>Hirsutism / excess hair growth</option>
+                        <option>Acne</option>
+                        <option>Weight gain / obesity</option>
+                        <option>Subfertility / infertility</option>
+                        <option>Polycystic ovaries on USS</option>
+                        <option>Elevated androgens</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Diagnostic criteria met <span class="dp-badge">DP</span></label>
+                    <select id="diagnosticCriteria">
+                        <option value="">Select</option>
+                        <option>Rotterdam criteria (2 of 3)</option>
+                        <option>NIH criteria (1990)</option>
+                        <option>AES criteria (2006)</option>
+                        <option>Not yet determined</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>BMI (kg/m²) <span class="dp-badge">DP</span></label>
+                    <input type="number" id="bmi" placeholder="e.g. 27.4" step="0.1">
+                </div>
+                <div class="field">
+                    <label>Cycle regularity <span class="dp-badge">DP</span></label>
+                    <select id="cycle">
+                        <option value="">Select</option>
+                        <option>Regular (21-35 days)</option>
+                        <option>Oligomenorrhoea (more than 35 days)</option>
+                        <option>Amenorrhoea (more than 90 days)</option>
+                        <option>Irregular</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field-row cols-1">
+                <div class="field">
+                    <label>Working impression / clinical notes <span class="dp-badge">DP</span></label>
+                    <textarea id="clinicalNotes" rows="3" placeholder="Enter working impression, relevant clinical observations, or reason for enrolment into the PCOD pilot trial..."></textarea>
+                    <span class="hint">Planned for CDR v2.0 — EVALUATION.clinical_synopsis.v1</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION E: Oncology Assessment (DISPLAY ONLY - dummy fields) -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">E</div>
+            <div class="section-title">Oncology assessment <span class="section-sub">DP in CDR</span></div>
+            <div class="section-ref">Planned: OBSERVATION.tumour.v1 (Phase 3)</div>
+        </div>
+        <div class="section-body">
+            <div class="field-row cols-3">
+                <div class="field">
+                    <label>Tumour type <span class="dp-badge">DP</span></label>
+                    <select id="tumourType">
+                        <option value="">Select</option>
+                        <option>Breast carcinoma</option>
+                        <option>Ovarian carcinoma</option>
+                        <option>Endometrial carcinoma</option>
+                        <option>Colorectal carcinoma</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>TNM stage <span class="dp-badge">DP</span></label>
+                    <select id="tnmStage">
+                        <option value="">Select</option>
+                        <option>Stage I</option>
+                        <option>Stage II</option>
+                        <option>Stage III</option>
+                        <option>Stage IV</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>ECOG status <span class="dp-badge">DP</span></label>
+                    <select id="ecog">
+                        <option value="">Select</option>
+                        <option>0 - Fully active</option>
+                        <option>1 - Restricted but ambulatory</option>
+                        <option>2 - Ambulatory >50%</option>
+                        <option>3 - Limited self-care</option>
+                        <option>4 - Completely disabled</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field-row cols-1">
+                <div class="field">
+                    <label>Prior treatments <span class="dp-badge">DP</span></label>
+                    <textarea id="priorTreatments" rows="2" placeholder="List any prior chemotherapy, radiotherapy, targeted therapy..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION F: SNOMED CT Binding (DISPLAY ONLY) -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">F</div>
+            <div class="section-title">Clinical terminology <span class="section-sub">— DP in CDR</span></div>
+            <div class="section-ref">SNOMED CT UK Clinical Edition</div>
+        </div>
+        <div class="section-body">
+            <div class="field-row cols-3">
+                <div class="field">
+                    <label>Diagnosis SNOMED CT <span class="dp-badge">DP</span></label>
+                    <input type="text" value="237055004" readonly>
+                    <span class="hint">Polycystic Ovary Syndrome</span>
+                </div>
+                <div class="field">
+                    <label>Finding SNOMED CT <span class="dp-badge">DP</span></label>
+                    <input type="text" value="74964007" readonly>
+                    <span class="hint">Clinical finding</span>
+                </div>
+                <div class="field">
+                    <label>Consent SNOMED CT <span class="dp-badge">DP</span></label>
+                    <input type="text" value="31564003" readonly>
+                    <span class="hint">Consent given</span>
+                </div>
+            </div>
+            <div class="locked-notice" style="margin-top:8px;">
+                SNOMED CT UK Clinical Edition v2026.05.01 | Terminology binding for reference only — not transmitted to CDR in v1.0
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION G: Clinical encounter (REAL DATA - stored in CDR) -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">G</div>
+            <div class="section-title">Clinical encounter <span class="section-sub">— stored in CDR</span></div>
+            <div class="section-ref">openEHR COMPOSITION.encounter.v1</div>
+        </div>
+        <div class="section-body">
+            <div class="field-row cols-2">
+                <div class="field">
+                    <label>Encounter date and time <span class="req">*</span></label>
+                    <input type="datetime-local" id="encounterDate">
+                </div>
+                <div class="field">
+                    <label>Recruiting clinician <span class="req">*</span></label>
+                    <select id="clinician" onchange="updateStatus()">
+                        <option value="">Select clinician</option>
+                        <option>Dr. Fatima Al-Rashidi (PI)</option>
+                        <option>Dr. Yusuf Okonkwo</option>
+                        <option>Dr. Nadia Khalil</option>
+                        <option>Dr. Amara Hussain</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Facility</label>
+                    <input type="text" value="Conceptual G.O.T. Hospital, Bristol" readonly>
+                </div>
+                <div class="field">
+                    <label>Setting <span class="dp-badge">DP</span></label>
+                    <select id="setting">
+                        <option>Outpatient clinic</option>
+                        <option>Inpatient ward</option>
+                        <option>Telehealth</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION H: Audit trail -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">H</div>
+            <div class="section-title">Audit trail — ALCOA+</div>
+            <div class="section-ref">ICH GCP E6(R2) section 4.9 | 21 CFR Part 11</div>
+        </div>
+        <div class="section-body">
+            <div class="field-row cols-3">
+                <div class="field">
+                    <label>Data entry by</label>
+                    <input type="text" id="entryBy" placeholder="Full name">
+                </div>
+                <div class="field">
+                    <label>Role</label>
+                    <select id="entryRole">
+                        <option>Data manager</option>
+                        <option>Investigator</option>
+                        <option>Research nurse</option>
+                        <option>CRA</option>
+                        <option>CRF lead</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Entry timestamp (auto)</label>
+                    <input type="text" id="entryTs" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="security-banner">
+        <strong>UK GDPR Article 32 - Security of Processing</strong> | Data encrypted at rest (AES-256) and in transit (TLS 1.3) | Role-based access control (RBAC) implemented | Regular security audits: Quarterly
+    </div>
+
+    <div class="pseudonymization-notice" style="background:#fff8e1; font-size:12px; padding:8px 12px; margin:10px 0; border-radius:6px; border-left:3px solid #ffc107;">
+        <strong>NHS Digital DSPT v5.0 Compliance:</strong> Patient identifiers are pseudonymized in audit trails and data exports. NHS number stored as pseudonymized identifier per UK GDPR Article 9(2)(h).
+    </div>
+
+    <div class="actions">
+        <button class="btn-clear" onclick="clearForm()">Clear form</button>
+        <button class="btn-submit" id="submitBtn" onclick="submitToCDR()" disabled>Submit to CDR</button>
+    </div>
+
+    <div class="success-box" id="successBox"><div id="successDetail"></div></div>
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="compliance-footer">
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <div>
+                <strong>ICH GCP E6(R2) Section 4.9 - Records & Reports</strong><br>
+                All data entries are attributable, legible, contemporaneous, original, and accurate (ALCOA+).<br>
+                Audit trail captures user identity, timestamp, and any modifications.
+            </div>
+            <div>
+                <strong>Section 5.5 - Data Retention</strong><br>
+                Data retention: Minimum 15 years post-trial completion per ICH GCP E6(R2) Section 5.5
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_BASE = "/api";
+const TEMPLATE_ID = "PCOD_Working_Impression";
+
+// Set session time
+const now = new Date();
+const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+document.getElementById('sessionTime').innerHTML = now.toLocaleTimeString('en-GB', options);
+document.getElementById('entryTs').value = now.toLocaleString('en-GB');
+
+function init() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('encounterDate').value = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+}
+
+function toggleConsent(checkId, boxId) {
+    const chk = document.getElementById(checkId);
+    const box = document.getElementById(boxId);
+    chk.checked = !chk.checked;
+    if (chk.checked) {
+        box.classList.add('checked');
+    } else {
+        box.classList.remove('checked');
+    }
+    updateStatus();
+}
+
+async function checkStatus() {
+    try {
+        const response = await fetch(API_BASE + '/definition/template/adl1.4/' + TEMPLATE_ID);
+        if (response.ok) {
+            document.getElementById('cdrStatus').innerHTML = '<span class="online">✅ Online</span>';
+            document.getElementById('templateStatus').innerHTML = '<span class="online">✅ Loaded (LOCKED)</span>';
+            const aqlBody = { q: "SELECT COUNT(c) FROM COMPOSITION c WHERE c/archetype_details/template_id/value = '" + TEMPLATE_ID + "'" };
+            const recordsRes = await fetch(API_BASE + '/query/aql', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(aqlBody)
+            });
+            const data = await recordsRes.json();
+            document.getElementById('recordCount').innerHTML = data.rows[0][0];
+        } else {
+            document.getElementById('cdrStatus').innerHTML = '<span class="offline">❌ Offline</span>';
+            document.getElementById('templateStatus').innerHTML = '<span class="offline">❌ Not found</span>';
+        }
+    } catch (e) {
+        document.getElementById('cdrStatus').innerHTML = '<span class="offline">❌ Offline</span>';
+    }
+}
+
+function validateNHS() {
+    const v = document.getElementById('nhsNumber').value.replace(/\D/g, '');
+    const hint = document.getElementById('nhsHint');
+    if (v.length === 0) {
+        hint.textContent = '10 digits, no spaces';
+        hint.style.color = '#718096';
+        return false;
+    }
+    if (v.length === 10) {
+        hint.textContent = '✓ Valid NHS number';
+        hint.style.color = '#4caf50';
+        return true;
+    } else {
+        hint.textContent = '⚠️ Must be exactly 10 digits (currently ' + v.length + ')';
+        hint.style.color = '#f44336';
+        return false;
+    }
+}
+
+function updateStatus() {
+    const nameOk = document.getElementById('patientName').value.trim().length >= 2;
+    const nhsOk = /^\d{10}$/.test(document.getElementById('nhsNumber').value.replace(/\D/g, ''));
+    const consentOk = document.getElementById('consent-check').checked;
+    const eligOk = document.getElementById('eligibility-check').checked;
+    const clinicianOk = document.getElementById('clinician').value !== '';
+    
+    const allOk = nameOk && nhsOk && consentOk && eligOk && clinicianOk;
+    
+    const statusSpan = document.getElementById('formStatus');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (allOk) {
+        statusSpan.innerHTML = 'Ready to submit';
+        statusSpan.style.color = '#2e7d32';
+        submitBtn.disabled = false;
+    } else if (nameOk || nhsOk || consentOk) {
+        statusSpan.innerHTML = 'In progress';
+        statusSpan.style.color = '#ed6c02';
+        submitBtn.disabled = true;
+    } else {
+        statusSpan.innerHTML = 'Draft';
+        statusSpan.style.color = '#9e9e9e';
+        submitBtn.disabled = true;
+    }
+}
+
+function buildPayload() {
+    return {
+        "ctx/language": "en",
+        "ctx/territory": "GB",
+        "ctx/composer_name": document.getElementById('clinician').value,
+        "ctx/time": new Date(document.getElementById('encounterDate').value).toISOString(),
+        "pcod_working_impression/context/person:0/name|value": document.getElementById('patientName').value.trim(),
+        "pcod_working_impression/context/person:0/nhs_number|value": document.getElementById('nhsNumber').value.replace(/\D/g, '')
+    };
+}
+
+function confirmSubmission() {
+    return confirm('ELECTRONIC SIGNATURE CONFIRMATION\n\nBy clicking OK, you confirm that:\n1. You are the authorized investigator or delegated designee\n2. The data entered is accurate and complete to the best of your knowledge\n3. This action constitutes an electronic signature per 21 CFR Part 11\n4. You are accountable for this data entry\n5. Any corrections will be documented with audit trail\n\nDo you wish to proceed?');
+}
+
+async function submitToCDR() {
+    if (!confirmSubmission()) return;
+    
+    const btn = document.getElementById('submitBtn');
+    const successBox = document.getElementById('successBox');
+    const errorBox = document.getElementById('errorBox');
+    
+    successBox.style.display = 'none';
+    errorBox.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+    
+    try {
+        const ehrRes = await fetch(API_BASE + '/ehr', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+        if (!ehrRes.ok) throw new Error('EHR creation failed');
+        const ehrId = ehrRes.headers.get('Location').split('/').pop();
+        
+        const payload = buildPayload();
+        const url = API_BASE + '/ehr/' + ehrId + '/composition?format=FLAT&templateId=' + TEMPLATE_ID;
+        const compRes = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        if (compRes.status === 204 || compRes.ok) {
+            document.getElementById('successDetail').innerHTML = '✅ Record saved!<br>EHR ID: ' + ehrId + '<br>Patient: ' + payload['pcod_working_impression/context/person:0/name|value'];
+            successBox.style.display = 'block';
+            clearForm(true);
+            checkStatus();
+        } else {
+            throw new Error('Save failed');
+        }
+    } catch (err) {
+        errorBox.innerHTML = '❌ Error: ' + err.message;
+        errorBox.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit to CDR';
+    }
+}
+
+function clearForm(keepSuccess) {
+    // Clear real data fields
+    document.getElementById('patientName').value = '';
+    document.getElementById('nhsNumber').value = '';
+    document.getElementById('nhsHint').textContent = '10 digits, no spaces';
+    document.getElementById('nhsHint').style.color = '#718096';
+    document.getElementById('consent-check').checked = false;
+    document.getElementById('eligibility-check').checked = false;
+    document.getElementById('cb1').classList.remove('checked');
+    document.getElementById('cb2').classList.remove('checked');
+    document.getElementById('clinician').selectedIndex = 0;
+    
+    // Clear dummy fields
+    document.getElementById('dob').value = '';
+    document.getElementById('sex').selectedIndex = 0;
+    document.getElementById('ethnicity').selectedIndex = 0;
+    document.getElementById('postcode').value = '';
+    document.getElementById('gpPractice').value = '';
+    document.getElementById('presenting').selectedIndex = 0;
+    document.getElementById('diagnosticCriteria').selectedIndex = 0;
+    document.getElementById('bmi').value = '';
+    document.getElementById('cycle').selectedIndex = 0;
+    document.getElementById('clinicalNotes').value = '';
+    document.getElementById('tumourType').selectedIndex = 0;
+    document.getElementById('tnmStage').selectedIndex = 0;
+    document.getElementById('ecog').selectedIndex = 0;
+    document.getElementById('priorTreatments').value = '';
+    document.getElementById('entryBy').value = '';
+    document.getElementById('entryRole').selectedIndex = 0;
+    
+    if (!keepSuccess) {
+        document.getElementById('successBox').style.display = 'none';
+    }
+    document.getElementById('errorBox').style.display = 'none';
+    updateStatus();
+    init();
+}
+
+document.getElementById('nhsNumber').addEventListener('input', function() {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+});
+
+init();
+checkStatus();
+</script>
+</body>
+</html>

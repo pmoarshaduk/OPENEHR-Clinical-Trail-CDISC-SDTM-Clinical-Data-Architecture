@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CDR Status Test</title>
+</head>
+<body>
+    <h1>CDR Status Test</h1>
+    <div id="result">Testing...</div>
+    <button onclick="testAPI()">Test API</button>
+    
+    <script>
+        const API_BASE = "http://localhost:8080/ehrbase/rest/openehr/v1";
+        const TEMPLATE_ID = "PCOD_Working_Impression";
+        
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing API...<br>';
+            
+            try {
+                // Test template endpoint
+                const response = await fetch(`${API_BASE}/definition/template/adl1.4/${TEMPLATE_ID}`);
+                resultDiv.innerHTML += `Template endpoint status: ${response.status}<br>`;
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML += `? Template found: ${data.template_id}<br>`;
+                    
+                    // Test record count
+                    const aqlBody = { q: "SELECT COUNT(c) FROM COMPOSITION c WHERE c/archetype_details/template_id/value = '" + TEMPLATE_ID + "'" };
+                    const recordsRes = await fetch(`${API_BASE}/query/aql`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(aqlBody)
+                    });
+                    const recordsData = await recordsRes.json();
+                    resultDiv.innerHTML += `? Records count: ${recordsData.rows[0][0]}<br>`;
+                    resultDiv.innerHTML += '<span style="color:green">?? CDR is ONLINE!</span>';
+                } else {
+                    resultDiv.innerHTML += '<span style="color:red">? CDR is OFFLINE (Template not found)</span>';
+                }
+            } catch(error) {
+                resultDiv.innerHTML += `<span style="color:red">? Error: ${error.message}</span>`;
+            }
+        }
+        
+        testAPI();
+    </script>
+</body>
+</html>

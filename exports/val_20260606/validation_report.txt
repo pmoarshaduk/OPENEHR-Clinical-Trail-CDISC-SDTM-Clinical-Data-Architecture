@@ -1,0 +1,22 @@
+﻿╔═══════════════════════════════════════════════════════════════════════════════╗
+║                         SDTM PRE-VALIDATION REPORT                            ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+Validation Date: 2026-06-06 15:11:54
+Export Path: C:\Projects\PCOD\exports\raw_20260606
+Files Validated: 4
+
+SUMMARY
+=======
+Total Errors: 0
+Total Warnings: 0
+
+ERRORS (Must Fix)
+=================
+  No errors found.
+
+WARNINGS (Review)
+=================
+  No warnings found.
+
+STATUS: PASSED
